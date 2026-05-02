@@ -186,6 +186,16 @@
     border-color: var(--yellow-border);
   }
 
+  .product-card.fullpack-a {
+    background: #f8bbd0;
+    border-color: #e91e63;
+  }
+
+  .product-card.fullpack-b {
+    background: #bbdefb;
+    border-color: #1976d2;
+  }
+
   .product-name {
     font-size: 13px;
     font-weight: 700;
@@ -490,7 +500,7 @@
   </div>
   <div class="confirm-body" id="confirm-body"></div>
   <div class="confirm-footer">
-    <button class="btn-back" onclick="goProduct()">← 戻る</button>
+    <button class="btn-back" onclick="goProductBack()">← 戻る</button>
     <button class="btn-send" id="send-btn" onclick="sendData()">送信する 💳</button>
   </div>
 </div>
@@ -524,7 +534,7 @@ const products = [
   { id: 7,  name: "ロゴ<br>コースター",        price: 500,  cat: "a" },
   { id: 8,  name: "缶バッジ",                  price: 500,  cat: "a" },
   { id: 9,  name: "旧メガネ拭き",              price: 1000, cat: "a" },
-  { id: 10, name: "フルパック",                price: 3500, cat: "a" },
+  { id: 10, name: "フルパックA",               price: 3500, cat: "a" },
   // 新作グッズ (パックB)
   { id: 11, name: "店舗<br>コースター",        price: 800,  cat: "b" },
   { id: 12, name: "バメッサ<br>コースター",    price: 800,  cat: "b" },
@@ -532,7 +542,7 @@ const products = [
   { id: 14, name: "アンブレラ<br>マーカー",    price: 500,  cat: "b" },
   { id: 15, name: "アクスタ",                  price: 800,  cat: "b" },
   { id: 16, name: "フレーク<br>シール",        price: 1000, cat: "b" },
-  { id: 17, name: "フルパック",                price: 3500, cat: "b" },
+  { id: 17, name: "フルパックB",               price: 3500, cat: "b" },
   // その他
   { id: 18, name: "クリア<br>ファイル",        price: 500,  cat: "other" },
   { id: 19, name: "新メガネ拭き",              price: 1000, cat: "other" },
@@ -591,7 +601,8 @@ function buildProductPage() {
 
     items.forEach(p => {
       const card = document.createElement("div");
-      card.className = `product-card cat-${cat}`;
+      const isFullpack = p.id === 10 ? "fullpack-a" : p.id === 17 ? "fullpack-b" : null;
+      card.className = isFullpack ? `product-card ${isFullpack}` : `product-card cat-${cat}`;
       card.innerHTML = `
         <div class="product-name">${p.name}</div>
         <div class="product-price">¥${p.price.toLocaleString()}</div>
@@ -658,8 +669,13 @@ function goConfirm() {
   showPage("page-confirm");
 }
 
+function goProductBack() {
+  // 戻るボタン用：選択はリセットしない
+  showPage("page-product");
+}
+
 function goProduct() {
-  // リセット
+  // 送信完了後：選択をリセット
   products.forEach(p => quantities[p.id] = 0);
   buildProductPage();
   updateTotal();
