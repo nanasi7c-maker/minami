@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>サークル会計</title>
+<style>
+  :root {
+    --pink: #fce4ec;
+    --pink-border: #f48fb1;
+    --blue: #e3f2fd;
+    --blue-border: #90caf9;
+    --yellow: #fffde7;
+    --yellow-border: #fff176;
+    --accent: #e91e63;
+    --bg: #fafafa;
+    --text: #333;
+    --card-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    --radius: 12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ===== PASSWORD PAGE ===== */
+  #page-password {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 24px;
+    background: linear-gradient(135deg, #fce4ec 0%, #e3f2fd 100%);
+  }
+
+  .pw-box {
+    background: white;
+    border-radius: 20px;
+    padding: 40px 32px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 340px;
+    text-align: center;
+  }
+
+  .pw-box h1 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--accent);
+  }
+
+  .pw-box p {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 28px;
+  }
+
+  .pw-input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #eee;
+    border-radius: 10px;
+    font-size: 18px;
+    text-align: center;
+    letter-spacing: 4px;
+    outline: none;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+  }
+
+  .pw-input:focus { border-color: var(--accent); }
+
+  .pw-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .pw-btn:active { opacity: 0.8; }
+
+  .pw-error {
+    color: #e53935;
+    font-size: 13px;
+    margin-top: 10px;
+    display: none;
+  }
+
+  .pw-contact {
+    font-size: 11px;
+    color: #aaa;
+    margin-top: 20px;
+    line-height: 1.6;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 16px;
+  }
+
+  /* ===== COMMON ===== */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .header {
+    background: white;
+    padding: 14px 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .header h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .total-badge {
+    background: var(--accent);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  /* ===== PRODUCT PAGE ===== */
+  .product-area {
+    padding: 12px;
+  }
+
+  .category-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #666;
+    padding: 6px 4px 4px;
+    letter-spacing: 0.5px;
+  }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+
+  .product-card {
+    border-radius: var(--radius);
+    padding: 10px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    box-shadow: var(--card-shadow);
+    border: 1.5px solid transparent;
+    transition: transform 0.1s;
+  }
+
+  .product-card.cat-a {
+    background: var(--pink);
+    border-color: var(--pink-border);
+  }
+
+  .product-card.cat-b {
+    background: var(--blue);
+    border-color: var(--blue-border);
+  }
+
+  .product-card.cat-other {
+    background: var(--yellow);
+    border-color: var(--yellow-border);
+  }
+
+  .product-name {
+    font-size: 15px;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.35;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+  }
+
+  .product-price {
+    font-size: 14px;
+    color: #555;
+    font-weight: 700;
+  }
+
+  .qty-control {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .qty-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.1s, opacity 0.1s;
+    line-height: 1;
+  }
+
+  .qty-btn:active { transform: scale(0.9); opacity: 0.8; }
+
+  .btn-minus {
+    background: #ffcdd2;
+    color: #c62828;
+  }
+
+  .btn-plus {
+    background: #c8e6c9;
+    color: #2e7d32;
+  }
+
+  .qty-display {
+    font-size: 18px;
+    font-weight: 700;
+    min-width: 22px;
+    text-align: center;
+    color: var(--text);
+  }
+
+  .qty-display.nonzero {
+    color: var(--accent);
+  }
+
+  .checkout-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 12px 16px;
+    background: white;
+    box-shadow: 0 -4px 16px rgba(0,0,0,0.1);
+  }
+
+  .checkout-btn {
+    width: 100%;
+    padding: 16px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .checkout-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+
+  .checkout-btn:not(:disabled):active { opacity: 0.85; }
+
+  .product-area { padding-bottom: 90px; }
+
+  /* ===== CONFIRM PAGE ===== */
+  #page-confirm {
+    padding-bottom: 100px;
+  }
+
+  .confirm-body {
+    padding: 16px;
+  }
+
+  .confirm-title {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+
+  .confirm-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: white;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    box-shadow: var(--card-shadow);
+  }
+
+  .confirm-item-name {
+    font-size: 16px;
+    font-weight: 600;
+    flex: 1;
+  }
+
+  .confirm-item-qty {
+    font-size: 15px;
+    color: #888;
+    margin: 0 12px;
+  }
+
+  .confirm-item-price {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .confirm-total-box {
+    background: var(--accent);
+    color: white;
+    border-radius: 14px;
+    padding: 28px 24px;
+    text-align: center;
+    margin: 20px 0;
+    box-shadow: 0 4px 16px rgba(233,30,99,0.3);
+  }
+
+  .confirm-total-label {
+    font-size: 15px;
+    opacity: 0.85;
+    margin-bottom: 8px;
+  }
+
+  .confirm-total-amount {
+    font-size: 64px;
+    font-weight: 700;
+    letter-spacing: -2px;
+    line-height: 1;
+  }
+
+  .confirm-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 12px 16px;
+    background: white;
+    box-shadow: 0 -4px 16px rgba(0,0,0,0.1);
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn-back {
+    flex: 1;
+    padding: 14px;
+    background: #f0f0f0;
+    color: #555;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .btn-send {
+    flex: 2;
+    padding: 14px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .btn-send:active { opacity: 0.85; }
+  .btn-send:disabled { background: #ccc; }
+
+  /* ===== DONE PAGE ===== */
+  #page-done {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 32px;
+    text-align: center;
+  }
+
+  .done-icon {
+    font-size: 72px;
+    margin-bottom: 16px;
+    animation: pop 0.4s ease;
+  }
+
+  @keyframes pop {
+    0% { transform: scale(0.5); opacity: 0; }
+    70% { transform: scale(1.15); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .done-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .done-sub {
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 36px;
+  }
+
+  .btn-return {
+    padding: 16px 48px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(233,30,99,0.3);
+  }
+
+  /* sending overlay */
+  .sending-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255,255,255,0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent);
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== PASSWORD PAGE ===== -->
+<div id="page-password">
+  <div class="pw-box">
+    <h1>🌸 サークル会計</h1>
+    <p>パスワードを入力してください</p>
+    <input type="password" class="pw-input" id="pw-input" placeholder="●●●●" maxlength="8">
+    <button class="pw-btn" onclick="checkPassword()">入る</button>
+    <p class="pw-error" id="pw-error">パスワードが違います</p>
+    <p class="pw-contact">パスワードがわからない・使い方の質問・バグ報告は<br>みなみのDiscordまで📩</p>
+  </div>
+</div>
+
+<!-- ===== PRODUCT PAGE ===== -->
+<div id="page-product" class="page">
+  <div class="header">
+    <h2>🛍 商品選択</h2>
+    <div class="total-badge" id="header-total">¥0</div>
+  </div>
+  <div class="product-area" id="product-area"></div>
+  <div class="checkout-bar">
+    <button class="checkout-btn" id="checkout-btn" onclick="goConfirm()" disabled>会計へ進む →</button>
+  </div>
+</div>
+
+<!-- ===== CONFIRM PAGE ===== -->
+<div id="page-confirm" class="page">
+  <div class="header">
+    <h2>✅ 確認</h2>
+  </div>
+  <div class="confirm-body" id="confirm-body"></div>
+  <div class="confirm-footer">
+    <button class="btn-back" onclick="goProduct()">← 戻る</button>
+    <button class="btn-send" id="send-btn" onclick="sendData()">送信する 💳</button>
+  </div>
+</div>
+
+<!-- ===== DONE PAGE ===== -->
+<div id="page-done" class="page">
+  <div class="done-icon">🎉</div>
+  <div class="done-title">送信完了！</div>
+  <div class="done-sub">スプレッドシートに記録されました</div>
+  <button class="btn-return" onclick="goProduct()">次のお客さんへ →</button>
+</div>
+
+<!-- Sending overlay -->
+<div class="sending-overlay" id="sending-overlay">送信中...</div>
+
+<script>
+// ===== 設定 =====
+const PASSWORD = "0523";
+// ★ Google Apps Script のURLをここに貼る（後で設定）
+const GAS_URL = "YOUR_GAS_URL_HERE";
+
+// ===== 商品データ =====
+const products = [
+  // 旧作グッズ (パックA)
+  { id: 1, name: "バメッサステッカー",   price: 200,  cat: "a" },
+  { id: 2, name: "店長ステッカー",       price: 200,  cat: "a" },
+  { id: 3, name: "ロゴステッカー",       price: 200,  cat: "a" },
+  { id: 4, name: "ステッカー3種セット",  price: 500,  cat: "a" },
+  { id: 5, name: "アクリルキーホルダー", price: 800,  cat: "a" },
+  { id: 6, name: "バメッサコースター",   price: 500,  cat: "a" },
+  { id: 7, name: "ロゴコースター",       price: 500,  cat: "a" },
+  { id: 8, name: "缶バッジ",             price: 500,  cat: "a" },
+  { id: 9, name: "旧メガネ拭き",         price: 1000, cat: "a" },
+  { id: 10, name: "フルパック(旧)",      price: 3500, cat: "a" },
+  // 新作グッズ (パックB)
+  { id: 11, name: "店舗コースター",       price: 800,  cat: "b" },
+  { id: 12, name: "バメッサコースター(新)",price: 800, cat: "b" },
+  { id: 13, name: "コースター2種セット",  price: 1500, cat: "b" },
+  { id: 14, name: "アンブレラマーカー",   price: 500,  cat: "b" },
+  { id: 15, name: "アクスタ",             price: 800,  cat: "b" },
+  { id: 16, name: "フレークシール",       price: 1000, cat: "b" },
+  { id: 17, name: "フルパック(新)",       price: 3500, cat: "b" },
+  // その他
+  { id: 18, name: "クリアファイル",       price: 500,  cat: "other" },
+  { id: 19, name: "新メガネ拭き",         price: 1000, cat: "other" },
+];
+
+const categoryInfo = {
+  a:     { label: "🎀 旧作グッズ（パックA）" },
+  b:     { label: "💙 新作グッズ（パックB）" },
+  other: { label: "✨ その他" },
+};
+
+// 個数管理
+const quantities = {};
+products.forEach(p => quantities[p.id] = 0);
+
+// ===== パスワード =====
+function checkPassword() {
+  const val = document.getElementById("pw-input").value;
+  if (val === PASSWORD) {
+    document.getElementById("page-password").style.display = "none";
+    showPage("page-product");
+    buildProductPage();
+  } else {
+    document.getElementById("pw-error").style.display = "block";
+    document.getElementById("pw-input").value = "";
+  }
+}
+
+document.getElementById("pw-input").addEventListener("keydown", e => {
+  if (e.key === "Enter") checkPassword();
+});
+
+// ===== ページ切り替え =====
+function showPage(id) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+// ===== 商品ページ構築 =====
+function buildProductPage() {
+  const area = document.getElementById("product-area");
+  area.innerHTML = "";
+
+  const cats = ["a", "b", "other"];
+  cats.forEach(cat => {
+    const items = products.filter(p => p.cat === cat);
+    if (!items.length) return;
+
+    const label = document.createElement("div");
+    label.className = "category-label";
+    label.textContent = categoryInfo[cat].label;
+    area.appendChild(label);
+
+    const grid = document.createElement("div");
+    grid.className = "product-grid";
+
+    items.forEach(p => {
+      const card = document.createElement("div");
+      card.className = `product-card cat-${cat}`;
+      card.innerHTML = `
+        <div class="product-name">${p.name}</div>
+        <div class="product-price">¥${p.price.toLocaleString()}</div>
+        <div class="qty-control">
+          <button class="qty-btn btn-minus" onclick="changeQty(${p.id}, -1)">−</button>
+          <span class="qty-display" id="qty-${p.id}">0</span>
+          <button class="qty-btn btn-plus" onclick="changeQty(${p.id}, +1)">＋</button>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+
+    area.appendChild(grid);
+  });
+}
+
+// ===== 個数変更 =====
+function changeQty(id, delta) {
+  quantities[id] = Math.max(0, quantities[id] + delta);
+  const el = document.getElementById(`qty-${id}`);
+  el.textContent = quantities[id];
+  el.className = "qty-display" + (quantities[id] > 0 ? " nonzero" : "");
+  updateTotal();
+}
+
+function updateTotal() {
+  const total = calcTotal();
+  document.getElementById("header-total").textContent = `¥${total.toLocaleString()}`;
+  document.getElementById("checkout-btn").disabled = total === 0;
+}
+
+function calcTotal() {
+  return products.reduce((sum, p) => sum + p.price * quantities[p.id], 0);
+}
+
+function getSelectedItems() {
+  return products.filter(p => quantities[p.id] > 0);
+}
+
+// ===== 確認ページ =====
+function goConfirm() {
+  const items = getSelectedItems();
+  const total = calcTotal();
+  const body = document.getElementById("confirm-body");
+
+  let html = `<div class="confirm-title">選択した商品</div>`;
+  items.forEach(p => {
+    const subtotal = p.price * quantities[p.id];
+    html += `
+      <div class="confirm-item">
+        <div class="confirm-item-name">${p.name}</div>
+        <div class="confirm-item-qty">×${quantities[p.id]}</div>
+        <div class="confirm-item-price">¥${subtotal.toLocaleString()}</div>
+      </div>`;
+  });
+
+  html += `
+    <div class="confirm-total-box">
+      <div class="confirm-total-label">合計金額</div>
+      <div class="confirm-total-amount">¥${total.toLocaleString()}</div>
+    </div>`;
+
+  body.innerHTML = html;
+  showPage("page-confirm");
+}
+
+function goProduct() {
+  // リセット
+  products.forEach(p => quantities[p.id] = 0);
+  buildProductPage();
+  updateTotal();
+  showPage("page-product");
+}
+
+// ===== 送信 =====
+async function sendData() {
+  if (GAS_URL === "YOUR_GAS_URL_HERE") {
+    alert("GASのURLが設定されていません。\nkaikei.html内の GAS_URL を設定してください。");
+    return;
+  }
+
+  const items = getSelectedItems();
+  const total = calcTotal();
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+  const payload = {
+    datetime: dateStr,
+    total: total,
+    items: items.map(p => ({
+      name: p.name,
+      qty: quantities[p.id],
+      unitPrice: p.price,
+      subtotal: p.price * quantities[p.id],
+    }))
+  };
+
+  document.getElementById("sending-overlay").style.display = "flex";
+  document.getElementById("send-btn").disabled = true;
+
+  try {
+    await fetch(GAS_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    document.getElementById("sending-overlay").style.display = "none";
+    showPage("page-done");
+  } catch (e) {
+    document.getElementById("sending-overlay").style.display = "none";
+    document.getElementById("send-btn").disabled = false;
+    alert("送信に失敗しました。通信状況を確認してください。");
+  }
+}
+</script>
+</body>
+</html>
