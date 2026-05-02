@@ -392,13 +392,16 @@
 
   /* ===== DONE PAGE ===== */
   #page-done {
-    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
     padding: 32px;
     text-align: center;
+  }
+
+  #page-done.active {
+    display: flex;
   }
 
   .done-icon {
