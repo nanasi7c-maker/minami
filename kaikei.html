@@ -155,17 +155,17 @@
   .product-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 6px;
+    gap: 5px;
     margin-bottom: 4px;
   }
 
   .product-card {
     border-radius: var(--radius);
-    padding: 10px 4px;
+    padding: 8px 3px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
     box-shadow: var(--card-shadow);
     border: 1.5px solid transparent;
     transition: transform 0.1s;
@@ -187,11 +187,11 @@
   }
 
   .product-name {
-    font-size: 15px;
+    font-size: 13px;
     font-weight: 700;
     text-align: center;
     line-height: 1.35;
-    min-height: 40px;
+    min-height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -200,7 +200,7 @@
   }
 
   .product-price {
-    font-size: 14px;
+    font-size: 12px;
     color: #555;
     font-weight: 700;
   }
@@ -212,11 +212,11 @@
   }
 
   .qty-btn {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     border: none;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
     cursor: pointer;
     display: flex;
@@ -239,9 +239,9 @@
   }
 
   .qty-display {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
-    min-width: 22px;
+    min-width: 20px;
     text-align: center;
     color: var(--text);
   }
@@ -512,27 +512,27 @@ const GAS_URL = "YOUR_GAS_URL_HERE";
 // ===== 商品データ =====
 const products = [
   // 旧作グッズ (パックA)
-  { id: 1, name: "バメッサステッカー",   price: 200,  cat: "a" },
-  { id: 2, name: "店長ステッカー",       price: 200,  cat: "a" },
-  { id: 3, name: "ロゴステッカー",       price: 200,  cat: "a" },
-  { id: 4, name: "ステッカー3種セット",  price: 500,  cat: "a" },
-  { id: 5, name: "アクリルキーホルダー", price: 800,  cat: "a" },
-  { id: 6, name: "バメッサコースター",   price: 500,  cat: "a" },
-  { id: 7, name: "ロゴコースター",       price: 500,  cat: "a" },
-  { id: 8, name: "缶バッジ",             price: 500,  cat: "a" },
-  { id: 9, name: "旧メガネ拭き",         price: 1000, cat: "a" },
-  { id: 10, name: "フルパック(旧)",      price: 3500, cat: "a" },
+  { id: 1,  name: "バメッサ<br>ステッカー",    price: 200,  cat: "a" },
+  { id: 2,  name: "店長<br>ステッカー",        price: 200,  cat: "a" },
+  { id: 3,  name: "ロゴ<br>ステッカー",        price: 200,  cat: "a" },
+  { id: 4,  name: "ステッカー<br>３種セット",  price: 500,  cat: "a" },
+  { id: 5,  name: "アクリル<br>キーホルダー",  price: 800,  cat: "a" },
+  { id: 6,  name: "バメッサ<br>コースター",    price: 500,  cat: "a" },
+  { id: 7,  name: "ロゴ<br>コースター",        price: 500,  cat: "a" },
+  { id: 8,  name: "缶バッジ",                  price: 500,  cat: "a" },
+  { id: 9,  name: "旧メガネ拭き",              price: 1000, cat: "a" },
+  { id: 10, name: "フルパック",                price: 3500, cat: "a" },
   // 新作グッズ (パックB)
-  { id: 11, name: "店舗コースター",       price: 800,  cat: "b" },
-  { id: 12, name: "バメッサコースター(新)",price: 800, cat: "b" },
-  { id: 13, name: "コースター2種セット",  price: 1500, cat: "b" },
-  { id: 14, name: "アンブレラマーカー",   price: 500,  cat: "b" },
-  { id: 15, name: "アクスタ",             price: 800,  cat: "b" },
-  { id: 16, name: "フレークシール",       price: 1000, cat: "b" },
-  { id: 17, name: "フルパック(新)",       price: 3500, cat: "b" },
+  { id: 11, name: "店舗<br>コースター",        price: 800,  cat: "b" },
+  { id: 12, name: "バメッサ<br>コースター",    price: 800,  cat: "b" },
+  { id: 13, name: "コースター<br>２種セット",  price: 1500, cat: "b" },
+  { id: 14, name: "アンブレラ<br>マーカー",    price: 500,  cat: "b" },
+  { id: 15, name: "アクスタ",                  price: 800,  cat: "b" },
+  { id: 16, name: "フレーク<br>シール",        price: 1000, cat: "b" },
+  { id: 17, name: "フルパック",                price: 3500, cat: "b" },
   // その他
-  { id: 18, name: "クリアファイル",       price: 500,  cat: "other" },
-  { id: 19, name: "新メガネ拭き",         price: 1000, cat: "other" },
+  { id: 18, name: "クリア<br>ファイル",        price: 500,  cat: "other" },
+  { id: 19, name: "新メガネ拭き",              price: 1000, cat: "other" },
 ];
 
 const categoryInfo = {
@@ -679,7 +679,7 @@ async function sendData() {
     datetime: dateStr,
     total: total,
     items: items.map(p => ({
-      name: p.name,
+      name: p.name.replace(/<br>/g, ""),
       qty: quantities[p.id],
       unitPrice: p.price,
       subtotal: p.price * quantities[p.id],
