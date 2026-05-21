@@ -687,6 +687,7 @@ function goProduct() {
   products.forEach(p => quantities[p.id] = 0);
   buildProductPage();
   updateTotal();
+  document.getElementById("send-btn").disabled = false;
   showPage("page-product");
 }
 
