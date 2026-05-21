@@ -525,7 +525,7 @@
 // ===== 設定 =====
 const PASSWORD = "0523";
 // ★ Google Apps Script のURLをここに貼る（後で設定）
-const GAS_URL = "https://script.google.com/macros/s/AKfycbxEIAq5Sabk67KhXxebl02qXlEB2eqc0zSht4cILxSSnIA4OZq0Q41An-sYRZ6hyTGz/exec";
+const GAS_URL = "YOUR_GAS_URL_HERE";
 
 // ===== 商品データ =====
 const products = [
@@ -717,23 +717,12 @@ async function sendData() {
   document.getElementById("send-btn").disabled = true;
 
   try {
-    const response = await fetch(GAS_URL, {
+    await fetch(GAS_URL, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
-
-    if (!response.ok) {
-      throw new Error("HTTPエラー");
-    }
-
-    const result = await response.json();
-
-    if (result.status !== "ok") {
-      throw new Error(result.message || "送信失敗");
-    }
 
     document.getElementById("sending-overlay").style.display = "none";
     showPage("page-done");
@@ -742,7 +731,7 @@ async function sendData() {
     document.getElementById("sending-overlay").style.display = "none";
     document.getElementById("send-btn").disabled = false;
 
-    alert("送信に失敗しました。\n" + e.message);
+    alert("送信に失敗しました。\n通信状況を確認してください。");
   }
 }
 </script>
