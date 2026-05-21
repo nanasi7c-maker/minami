@@ -196,6 +196,11 @@
     border-color: #1976d2;
   }
 
+  .product-card.cat-green {
+    background: #f3e5f5;
+    border-color: #ce93d8;
+  }
+
   .product-name {
     font-size: 13px;
     font-weight: 700;
@@ -546,6 +551,8 @@ const products = [
   // その他
   { id: 18, name: "クリア<br>ファイル",        price: 500,  cat: "other" },
   { id: 19, name: "新メガネ拭き",              price: 1000, cat: "other" },
+  { id: 20, name: "まほろば",                  price: 500,  cat: "other" },
+  { id: 21, name: "ダルウィニー",              price: 500,  cat: "other" },
 ];
 
 const categoryInfo = {
@@ -602,7 +609,8 @@ function buildProductPage() {
     items.forEach(p => {
       const card = document.createElement("div");
       const isFullpack = p.id === 10 ? "fullpack-a" : p.id === 17 ? "fullpack-b" : null;
-      card.className = isFullpack ? `product-card ${isFullpack}` : `product-card cat-${cat}`;
+      const isGreen = p.id === 20 || p.id === 21;
+      card.className = isFullpack ? `product-card ${isFullpack}` : isGreen ? `product-card cat-green` : `product-card cat-${cat}`;
       card.innerHTML = `
         <div class="product-name">${p.name}</div>
         <div class="product-price">¥${p.price.toLocaleString()}</div>
@@ -709,18 +717,32 @@ async function sendData() {
   document.getElementById("send-btn").disabled = true;
 
   try {
-    await fetch(GAS_URL, {
+    const response = await fetch(GAS_URL, {
       method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify(payload)
     });
+
+    if (!response.ok) {
+      throw new Error("HTTPエラー");
+    }
+
+    const result = await response.json();
+
+    if (result.status !== "ok") {
+      throw new Error(result.message || "送信失敗");
+    }
+
     document.getElementById("sending-overlay").style.display = "none";
     showPage("page-done");
+
   } catch (e) {
     document.getElementById("sending-overlay").style.display = "none";
     document.getElementById("send-btn").disabled = false;
-    alert("送信に失敗しました。通信状況を確認してください。");
+
+    alert("送信に失敗しました。\n" + e.message);
   }
 }
 </script>
